@@ -1,0 +1,17 @@
+e1dc010a59297fcf64fa3e6a9a7367b3 *DESCRIPTION
+09549726d42d22486501dc29a0f7b22a *NAMESPACE
+8bd85099c086d4d275274db90f941985 *NEWS.md
+35f51a6df3f9dd5a63202f443c1317cf *R/Special_matrices.R
+7143ab94e8415c9b369869c255600120 *R/is_symmetric_matrix.R
+5bacacc40626af16ad9147006c687188 *R/matrixNormal_Distribution.R
+12048c4f9038ee240c12f667e595e484 *R/matrixNormal_pkg.R
+ea2861b6628adb39f9a3005e6030d53f *R/tr.R
+0da1e55c764b63d335d983d1226005b9 *R/vec.R
+3bbf3c4fadc2791567551bdc1991aa50 *man/is.symmetric.matrix.Rd
+cb7ef2767c8303eaa9ad5dfd052de484 *man/matrixNormal.Rd
+ddbda4faecd7c1c93b8edd16c5cda08b *man/matrixNormal_Distribution.Rd
+51c41b560510353e42067da1158e5e8e *man/special.matrix.Rd
+930fc80fd4d284e6bb2a683909d9a7d4 *man/tr.Rd
+a3be61465ed4fdbea32a6d76cc92caf7 *man/vec.Rd
+6199c3b1e4de527d53ad5a01bdd8bafa *tests/testthat.R
+dc151de8d51bd947000cc553c9514b67 *tests/testthat/test_tr.R
