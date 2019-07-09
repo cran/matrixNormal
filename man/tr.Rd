@@ -24,7 +24,8 @@ tr( I(3) )
 
 }
 \seealso{
-Other matrix: \code{\link{special.matrix}}
+Other matrix: \code{\link{special.matrix}},
+  \code{\link{vec}}
 }
 \concept{matrix}
 \keyword{matrix}

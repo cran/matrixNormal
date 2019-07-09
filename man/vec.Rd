@@ -7,7 +7,7 @@
 vec(A, use.Names = TRUE)
 }
 \arguments{
-\item{A}{a matrix}
+\item{A}{A m x n matrix.}
 
 \item{use.Names}{logical. If TRUE, the names of A are taken to be names of the stacked matrix. Default: TRUE.}
 }
@@ -15,10 +15,10 @@ vec(A, use.Names = TRUE)
 A vector with mn elements.
 }
 \description{
-Returns a column vector that is a stack of the columns of A, an m by n matrix.
+Returns a column vector that stacks the columns of A, an m by n matrix.
 }
 \note{
-Adapted from Frederick Novomestky's \pkg{matrixcalc}. This function is edited so that it can take dimension names and return as a vector.
+Adapted from Frederick Novomestky's \pkg{matrixcalc}. This function is edited so that it can take dimension names and return the matrix as a vector.
 }
 \examples{
 M <- matrix(c(4,5,6,7,8,9), nrow=3)
@@ -33,8 +33,9 @@ vec(M)
 Magnus, J. R. and H. Neudecker (1999). \emph{Matrix Differential Calculus with Applications in Statistics and Econometrics.} Second Edition, John Wiley, ed.
 }
 \seealso{
-Other distribution: \code{\link{matrixNormal_Distribution}}
+Other matrix: \code{\link{special.matrix}},
+  \code{\link{tr}}
 }
-\concept{distribution}
+\concept{matrix}
 \keyword{distribution}
 \keyword{matrix}

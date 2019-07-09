@@ -32,7 +32,7 @@ J(6,10)
 J(6)
 }
 \seealso{
-Other matrix: \code{\link{tr}}
+Other matrix: \code{\link{tr}}, \code{\link{vec}}
 }
 \concept{matrix}
 \keyword{identity}

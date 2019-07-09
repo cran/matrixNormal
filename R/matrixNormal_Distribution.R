@@ -1,36 +1,58 @@
 #'The Matrix Normal Distribution
 
 #'@family distribution
-#'@keywords distribution
+#'@keywords matrixNormal distribution
 
 #'@name matrixNormal_Distribution
 NULL
-#'@description The density (dmatnorm), cumulative distribution function (CDF, pmatnorm), and generation of 1 random number from the matrix normal (rmatnorm) is produced:
-#' A ~ MatNorm_n,p(M, U, V)
-#'
+#'@description The density (\code{dmatnorm}()), cumulative distribution function (CDF, \code{pmatnorm}()), and generation of 1 random number from the matrix normal (\code{rmatnorm}()) is produced from
+#' \deqn{ A ~ MatNorm_{n,p}(M, U, V) }
 #'@details
 #'Ideally, both scale matrices are positive-definite. However, they may not appear to be symmetric; you may want to increase the tolerance.
 #'
-#' These functions rely heavily on this property of matrix normal distribution. Let function koch() refer to the Kronecker product of a matrix. For a n x p matrix A, if \eqn{A ~ MatNorm(M, U, V)}, then \deqn{ vec(A) ~ MVN_{np} (M, Sigma = koch(U,V) ) .} Thus, we can find the probability that Lower < A < Upper by finding the CDF of vec(A), which is given in \code{\link[mvtnorm]{pmvnorm}} function in \pkg{mvtnorm}. Also, we can simulate 1 random matrix A from a matrix normal by sampling vec(A) from \code{\link[mvtnorm]{rmvnorm}} form\pkg{mvtnorm}.
+#' These functions rely heavily on this following property of matrix normal distribution. Let function `koch()` refer to the Kronecker product of a matrix. For a n x p matrix A,
+#' if  \eqn{ A \sim MatNorm(M, U, V)}, then \deqn{ vec(A) \sim MVN_{np} (M, Sigma = koch(U,V) ) }.
+#'
+#' Thus, we can find the probability that Lower < A < Upper by finding the CDF of vec(A), which is given in \code{\link[mvtnorm]{pmvnorm}} function in \pkg{mvtnorm}.  See \code{\link[mvtnorm]{algorithms}} and \code{\link[mvtnorm]{pmvnorm}}.
+# There are three algorithms available for evaluating normal probabilities: \itemize{
+# \item The default is the randomized Quasi-Monte-Carlo procedure by Genz (1992, 1993) and Genz and Bretz (2002) applicable to arbitrary covariance structures and dimensions up to 1000.
+# \item For smaller dimensions (up to 20) and non-singular covariance matrices, the algorithm by Miwa et al. (2003) can be used as well.
+# \item For two- and three-dimensional problems and semi-infinite integration region, TVPACK implements an interface to the methods described by Genz (2004).
+# }
+# The "..." arguments define the hyper-parameaters for GenzBertz algorithm: \describe{
+# {maxpts}{maximum number of function values as integer. The internal FORTRAN code always uses a minimum number depending on the dimension.Default 25000.}
+# {abseps}{absolute error tolerance.}
+# {releps}{relative error tolerance as double.}
+#' Also, we can simulate 1 random matrix A from a matrix normal by sampling vec(A) from \pkg{mvtnorm}::\code{\link[mvtnorm]{rmvnorm}}() function. This matrix A takes the rownames from U and the colnames from V.
+
+# @note Not implemented yet.
+#  To calculate the determinant more quickly for large matrices, the logdet function of a matrix A from LaplacesDemon
+#  is used instead of log(det(A)). Author: Statisticat, LLC. software@bayesian-inference.com.
+#  #Example: > dmatnorm(A, M, U, V )
+#  [1] -6367.045
+#  > dmatnorm(A, M, U, V, use.log = FALSE)
+#  [1] 0
+
 
 #'@references
 #' Iranmanesh, Anis, M. Arashi, and S. M. M. Tabatabaey  On Conditional Applications of Matrix Variate Normal Distribution. \emph{Iranian Journal of Mathematical Sciences and Informatics} 5, no. 2. (November 1, 2010): 33-43. < https://doi.org/10.7508/ijmsi.2010.02.004 >
 
 #'@param A  The numeric n x p matrix that follows the matrix-normal.
-#'@param M  The mean n x p matrix that is numeric and real.
-#'@param U  The individual scale n x n real positive-definite matrix
-#'@param V  The parameter scale p x p  real positive-semidefinite matrix
+#'@param M  The mean n x p matrix that is numeric and real. Must contain non-missing values.
+#'@param U  The individual scale n x n real positive-definite matrix (rows). Must contain non-missing values.
+#'@param V  The parameter scale p x p  real positive-definite matrix (columns). Must contain non-missing values.
 #'@inheritParams is.symmetric.matrix
-            #tol
 #'@param use.log Logical; if TRUE, densities d are given as log(d).
 
 #'@examples
 #' #Data Used
-#' A <- CO2[1:10, 4:5]
+# if( !requireNamespace("datasets", quietly = TRUE)) { install.packages("datasets")} #part of baseR.
+#' A <- datasets::CO2[1:10, 4:5]
 #' M <- cbind(stats::rnorm(10, 435, 296), stats::rnorm(10, 27, 11) )
 #' V <- matrix(c(87, 13, 13, 112), nrow = 2, ncol = 2, byrow = TRUE)
 #' V  #Right covariance matrix (2 x 2), say the covariance between parameters.
 #' U <- I(10) #Block of left-covariance matrix ( 84 x 84), say the covariance between subjects.
+#'
 #' #PDF
 #' dmatnorm(A, M, U, V )
 #' dmatnorm(A, M, U, V, use.log = FALSE)
@@ -47,10 +69,10 @@ NULL
 #' pmatnorm( Lower = -Inf, Upper = Inf, M, U, V)
 #'
 #' #Random generation
+#' set.seed(123)
 #' M <- cbind(rnorm(3, 435, 296), rnorm(3, 27, 11) )
 #' U <- diag(1, 3)
 #' V <- matrix(c(10, 5 ,5, 3), nrow = 2)
-#' set.seed(123)
 #' rmatnorm(M, U, V)
 
 #' \dontrun{  #M has a different sample size than U; will return an error.
@@ -62,28 +84,58 @@ NULL
 #'@importFrom mvtnorm pmvnorm
 #'@export dmatnorm
 dmatnorm <- function(A, M, U, V, tol = .Machine$double.eps^0.5, use.log = TRUE){
-  n <- nrow(A)
-  p <- ncol(A)
+    n <- nrow(A)
+    p <- ncol(A)
 
-  #Checks
-  if(is.data.frame(A) ) { A <- as.matrix(A) }
-  if( sum(dim(A) == dim(M)) != 2 ) {stop("M must have same dimensions as A.")}
-  check_matnorm(M, U, V, tol)
+    #Checks
+    if(is.data.frame(A) ) { A <- as.matrix(A) }
+    if( sum(dim(A) == dim(M)) != 2 ) {stop("M must have same dimensions as A.")}
+    check_matnorm(M, U, V, tol)
 
-  #The Log Density
-  log.dens <- (-n*p/2)*log(2*pi) - p/2*log( det(U)) - n/2*log( det(V) ) +
-    -1/2 * tr( solve(U) %*% (A - M) %*% solve(V) %*% t(A - M) )
+    #The Log Density
+    log.dens <- (-n*p/2)*log(2*pi) - p/2*log(det(U)) - n/2*log(det(V))  +
+      -1/2 * tr( solve(U) %*% (A - M) %*% solve(V) %*% t(A - M) )
 
-  #Return
-  if( use.log) { return (log.dens) } else { return( exp(log.dens) ) }
+    #Return
+    if( use.log) { return (log.dens) } else { return( exp(log.dens) ) }
 }
+
+ # #'@importFrom LaplacesDemon logdet() .  This is the Function used:
+  logdet <- function(x){ 2 * sum(log(diag(chol(x)))) }
+  #Uses logdet(U) instead of log(det(U)) which could calculate .
+  #The log(det(U)) and log(det(V)) terms have same terms but are positive.
+
+#Uses logdet function. Any difference using LaplaceNormal?
+ dmatnorm.logdet <- function(A, M, U, V,
+                             tol = .Machine$double.eps^0.5,
+                             use.log = TRUE
+                             ){
+    n <- nrow(A)
+    p <- ncol(A)
+
+    #Checks
+    if(is.data.frame(A) ) { A <- as.matrix(A) }
+    if( sum(dim(A) == dim(M)) != 2 ) {stop("M must have same dimensions as A.")}
+    check_matnorm(M, U, V, tol)
+
+    #The Log Density
+    log.dens <- (-n*p/2)*log(2*pi) - p/2*logdet(U) - n/2*logdet(V)  +
+      -1/2 * tr( solve(U) %*% (A - M) %*% solve(V) %*% t(A - M) )
+
+    #Return
+    if( use.log) { return (log.dens) } else { return( exp(log.dens) ) }
+}
+
+
 
 #'@rdname matrixNormal_Distribution
 #'@param Lower	 The n x p matrix of lower limits for CDF
 #'@param Upper	 The n x p matrix of upper limits for CDF
 #'@inheritParams mvtnorm::pmvnorm
 #'@export pmatnorm
-pmatnorm <- function( Lower = -Inf, Upper = Inf, M, U, V, tol = .Machine$double.eps^0.5, algorithm  = mvtnorm::GenzBretz(), ...){
+pmatnorm <- function(Lower = -Inf, Upper = Inf, M, U, V,
+                    tol = .Machine$double.eps^0.5,
+                    algorithm  = mvtnorm::GenzBretz(), ...){
   n <- nrow(M)
   p <- ncol(M)
 
@@ -111,7 +163,8 @@ pmatnorm <- function( Lower = -Inf, Upper = Inf, M, U, V, tol = .Machine$double.
     }
   }
   #Calculating the probablity
-  prob <- mvtnorm::pmvnorm(lower, upper, mean = vec(M), corr = NULL, sigma = kronecker(U,V),
+  prob <- mvtnorm::pmvnorm(lower, upper, mean = vec(M),
+                           corr = NULL, sigma = kronecker(U,V),
                            algorithm = algorithm, ...)
   warning("The covariance matrix is standardized. ")
 
@@ -119,10 +172,11 @@ pmatnorm <- function( Lower = -Inf, Upper = Inf, M, U, V, tol = .Machine$double.
 }
 
 #'@rdname matrixNormal_Distribution
+# #'@param s  Number of observations desired to simulate from. Defaults to 1. Currently has no effect.
 #'@inheritParams mvtnorm::rmvnorm
 #'@import mvtnorm
 #'@export rmatnorm
-rmatnorm <- function(M, U, V, tol = .Machine$double.eps^0.5, method = "chol", pre0.9_9994 = FALSE){
+rmatnorm <- function(M, U, V, tol = .Machine$double.eps^0.5, method = "chol"){
   n <- nrow(M)
   p <- ncol(M)
 
@@ -131,22 +185,44 @@ rmatnorm <- function(M, U, V, tol = .Machine$double.eps^0.5, method = "chol", pr
 
   #Vectorizing and sampling from rmvnorm
   Sigma <- kronecker(U,V)
-  vec.X <- mvtnorm::rmvnorm(1, vec(M), Sigma, method = method, pre0.9_9994)
-  X <- matrix(vec.X, nrow = n, ncol = p)
+  vec.X <- mvtnorm::rmvnorm(1, vec(M), Sigma, method = method)
+          #pre0.9_9994 = FALSE #uses later version of package.
+
+  #Reputting back into a matrix
+  X <- matrix(vec.X, nrow = n, ncol = p,
+              dimnames = list(rownames(U), colnames(V))
+              )
+
   return(X)
 }
 
 # cov(vec(A))  #should be 1
 
-
 #Check to make sure the parameters in MatrixNormal match.
 check_matnorm <- function( M, U, V, tol){
-  if(nrow(M) != nrow(U)){stop( "The mean matrix M has different sample size than scale sample size matrix U.")}
-  if(ncol(M) != nrow(V)){ stop( "The mean matrix M has different parameters than scale parameter matrix V.")}
+  if( anyNA(M) ){
+    stop("M contains missing values.", call. = FALSE)
+  }
+  if( anyNA(U) ){
+    stop("U contains missing values.")
+  }
+  if( anyNA(V) ){
+    stop("V contains missing values.")
+  }
+  if(nrow(M) != nrow(U)){
+    stop( "The mean matrix M has different sample size than scale sample size matrix U.")
+  }
+  if(ncol(M) != nrow(V)){
+    stop( "The mean matrix M has different number of parameters than scale parameter matrix V.")
+  }
   if(!is.positive.definite(U, tol) ){
     stop( "U is not positive definite. Calculation may not be accurate. Possibly raise tolerance"   )
   }
   if(!is.positive.definite(V, tol) ){
-   stop( "V is not positive definite. Calculation may not be accurate. Possibly raise tolerance.")
+    stop( "V is not positive definite. Calculation may not be accurate. Possibly raise tolerance.")
   }
+  return(invisible())
 }
+
+#Unsure if should add
+# if (!is.matrix(M)) {  M <- matrix(M) }

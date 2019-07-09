@@ -16,9 +16,9 @@ is.positive.semi.definite(A, tol = .Machine$double.eps^0.5)
 is.positive.definite(A, tol = .Machine$double.eps^0.5)
 }
 \arguments{
-\item{A}{Numeric matrix with no missing values.}
+\item{A}{A numeric matrix.}
 
-\item{tol}{A numeric tolerance level used to check if a matrix is symmetric; that is if the difference between it and its transpose is between -tol and tol.}
+\item{tol}{A numeric tolerance level used to check if a matrix is symmetric; that is if the difference between the matrix and its transpose is between -\code{tol} and \code{tol}.}
 }
 \description{
 Determine if a matrix is square, symmetric, positive-definite, or positive-semi-definite.
@@ -26,54 +26,65 @@ Determine if a matrix is square, symmetric, positive-definite, or positive-semi-
 \details{
 A tolerance is added to indicate if a matrix is approximately symmetric. If the matrix is not symmetric, a message as well as the top of the matrix is printed.
 \itemize{
-\item \code{is.symmetric.matrix} returns TRUE if A is a numeric symmetric square matrix and FALSE otherwise. A matrix is symmetric if the difference between A and its transpose is less than \emph{tol}.
-\item \code{is.positive.semi.definite} returns TRUE if a square symmetric real matrix A is positive semi-definite. A matrix is positive semi-definite if its smallest eigenvalue is greater than or equal to zero.
-\item \code{is.positive.definite} returns TRUE if a square symmetric real matrix A is positive-definite.A matrix is positive-definite if its smallest eigenvalue is greater than zero. }
+\item \code{is.symmetric.matrix} returns TRUE if A is a symmetric square numeric matrix and FALSE otherwise.  A matrix is symmetric if the difference between A and its transpose is less than \emph{tol}. If A has any missing values, \code{is.symmetric.matrix} returns NA.
+\item \code{is.positive.semi.definite} returns TRUE if a square symmetric real matrix A is positive semi-definite.  A matrix is positive semi-definite if its smallest eigenvalue is greater than or equal to zero. If A has any missing values, \code{is.symmetric.matrix} returns NA.
+\item \code{is.positive.definite} returns TRUE if a square symmetric real matrix A is positive-definite.  A matrix is positive-definite if its smallest eigenvalue is greater than zero. If A has any missing values, \code{is.symmetric.matrix} returns NA.
+}
 }
 \note{
-Functions adapted from Frederick Novomestky's \pkg{matrixcalc} package in order to implement \code{rmatnorm} function.  I changed argument x to A to reflect usual matrix notation. For \code{is.symmetric}, I added a tolerance so that A is symmetric even provided small differences between A and its transpose. Useful for rmatnorm function, which was used repeatedly to generate matrixNormal random variates in a Markov chain. For \code{is.positive.semi.definite} and \code{is.positive.definite},  I also saved time by avoiding a for loop and instead calculating the minimum of eigenvalues.
+Functions adapted from Frederick Novomestky's \pkg{matrixcalc} package in order to implement \code{rmatnorm} function.  I changed argument x to A to reflect usual matrix notation. For \code{is.symmetric}, I added a tolerance so that A is symmetric even provided small differences between A and its transpose. Useful for rmatnorm function, which was used repeatedly to generate matrixNormal random variates in a Markov chain. For \code{is.positive.semi.definite} and \code{is.positive.definite},  I also saved time by avoiding a $for-loop$ and instead calculating the minimum of eigenvalues.
 }
 \examples{
 ## Example 0: Not square matrix
-B <- matrix( c( 1, 2, 3, 4, 5, 6 ), nrow=2, byrow=TRUE )
+B <- matrix(c(1, 2, 3, 4, 5, 6), nrow = 2, byrow = TRUE)
 B
 is.square.matrix(B)
 
 ## Example 1: Not a matrix. should get an error.
-\dontrun{ df <- as.data.frame( matrix( c( 1, 2, 3, 4, 5, 6 ), nrow=2, byrow=TRUE ) )
+df <- as.data.frame(matrix(c(1, 2, 3, 4, 5, 6), nrow = 2, byrow = TRUE))
 df
+\dontrun{
 is.square.matrix(df)
 }
 
 ## Example 2: Not Symmetric & Compare against matrixcalc
-if( !requireNamespace( "matrixcalc", quietly = TRUE)) { install.packages("matrixcalc") }
-  F <- matrix( c( 1, 2, 3, 4 ), nrow=2, byrow=TRUE ); F
+F <- matrix(c(1, 2, 3, 4), nrow = 2, byrow = TRUE); F
 is.square.matrix(F)
-is.symmetric.matrix( F )   #should be FALSE
-matrixcalc::is.symmetric.matrix(F)
-#Another Symmetric Test found in base. Because of this, is.symmetric() may not be needed
-isSymmetric.matrix(F)
+is.symmetric.matrix(F)   # should be FALSE
+if (!requireNamespace("matrixcalc", quietly = TRUE)) {
+  matrixcalc::is.symmetric.matrix(F)
+} else {
+  message("you need to install the package matrixcalc to compare this example")
+}
 
 ## Example 3: Symmetric but negative-definite. same test of functions
 ##' eigenvalues are  3 -1
-G <- matrix( c( 1, 2, 2, 1 ), nrow=2, byrow=TRUE ); G
-is.symmetric.matrix( G )
-matrixcalc::is.symmetric.matrix(G)
+G <- matrix(c(1, 2, 2, 1), nrow = 2, byrow = TRUE); G
+is.symmetric.matrix(G)
+if (!requireNamespace("matrixcalc", quietly = TRUE)) {
+  matrixcalc::is.symmetric.matrix(G)
+} else {
+  message("you need to install the package matrixcalc to compare this example.")
+}
 isSymmetric.matrix(G)
-is.positive.definite(G) #FALSE
-is.positive.semi.definite(G) #FALSE
+is.positive.definite(G) # FALSE
+is.positive.semi.definite(G) # FALSE
+## Example 3b: A missing value in G
+G[1, 1] <- NA
+is.symmetric.matrix(G) # NA
+is.positive.definite(G)  # NA
 
 ## Example 4: positive definite matrix
-#' eigenvalues are 3.4142136 2.0000000 0.585786
-Q <- matrix( c( 2, -1, 0, -1, 2, -1, 0, -1, 2 ), nrow=3, byrow=TRUE )
+# eigenvalues are 3.4142136 2.0000000 0.585786
+Q <- matrix(c(2, -1, 0, -1, 2, -1, 0, -1, 2), nrow = 3, byrow = TRUE)
 is.symmetric.matrix(Q)
-is.positive.definite( Q )
+is.positive.definite(Q)
 
 ## Example 5: identity matrix is always positive definite
-I <- diag( 1, 3 )
-is.square.matrix(I) #TRUE
-is.symmetric.matrix(I) #TRUE
-is.positive.definite( I ) #TRUE
+I <- diag(1, 3)
+is.square.matrix(I) # TRUE
+is.symmetric.matrix(I) # TRUE
+is.positive.definite(I) # TRUE
 }
 \concept{statistics}
 \keyword{matrix}

@@ -1,17 +1,17 @@
 #'Stacks a Matrix using matrix operator "vec"
 #'
-#'@family distribution
+#'@family matrix
 #'@keywords distribution matrix
 #'
-#'@description Returns a column vector that is a stack of the columns of A, an m by n matrix.
+#'@description Returns a column vector that stacks the columns of A, an m by n matrix.
 
 #Accessory Function used in matrixNormal functions.
-#'@note Adapted from Frederick Novomestky's \pkg{matrixcalc}. This function is edited so that it can take dimension names and return as a vector.
+#'@note Adapted from Frederick Novomestky's \pkg{matrixcalc}. This function is edited so that it can take dimension names and return the matrix as a vector.
 #'
 #'@references
 #' Magnus, J. R. and H. Neudecker (1999). \emph{Matrix Differential Calculus with Applications in Statistics and Econometrics.} Second Edition, John Wiley, ed.
 #'
-#'@param A a matrix
+#'@param A A m x n matrix.
 #'@param use.Names logical. If TRUE, the names of A are taken to be names of the stacked matrix. Default: TRUE.
 #'@return A vector with mn elements.
 #'
