@@ -1,26 +1,31 @@
 
-# matrixNormal 0.0.4 2020-Jul-16
+# matrixNormal 0.0.5 2021-Apr-1
+
+  - Minor Change: Changed lazy data to FALSE to remove notes on CRAN
+    check.
+
+# matrixNormal 0.0.4 2020-08-26 on CRAN
 
   - New `vech()` function: performs half-vectorization on a symmetric
     matrix. This is the vector-form of the lower triangular matrix only.
     Unlike other functions on CRAN, vech() inherits any names from the
     matrix.
-  - `is.positive.definite()`, `is.positive.semi.definite()`: if A is not
-    symmetric, these functions NOW return FALSE instead of stopping the
-    function. Restructured helper `find.eval()`. Change made 10/8/19
-  - `is.symmetric()`, `is.positive.definite()`,
-    `is.positive.semi.definite()`: now return NA if A contains a missing
-    value (`NA`).
-  - `dmatrixnorm`: Clarification: replace the name of argument `use.log`
+  - `dmatrixnorm`: Clarified by replacing the name of argument `use.log`
     with `log` for consistency in argument name with mvtnorm and stats
     package.
+  - `is.symmetric()`, `is.positive.definite()`,
+    `is.positive.semi.definite()`:
+      - if A is not symmetric, these functions NOW return FALSE instead
+        of stopping the function. Restructured helper `find.eval()`.  
+      - if A contains a missing value (`NA`), these functions NOW return
+        NA.
   - `rmatrixnorm`: Added the first argument `s` to draw many random
     samples. Only 1 sample is still drawn; the argument currently has no
     effect but acts as a placeholder in future releases.
   - Clarified documentation.
   - Added session information and version details to the vignette. The
-    conclusions from the vignette still apply to the updated versions of
-    the packages listed.
+    updated versions of the packages listed do not affect the
+    conclusions.
 
 # matrixNormal 0.0.2 2019-12-5
 
