@@ -47,21 +47,25 @@ is.square.matrix(B)
 ## Example 1: Not a matrix. should get an error.
 df <- as.data.frame(matrix(c(1, 2, 3, 4, 5, 6), nrow = 2, byrow = TRUE))
 df
-\dontrun{is.square.matrix(df)}
+\dontrun{
+is.square.matrix(df)
+}
 
 ## Example 2: Not symmetric & compare against matrixcalc
 F <- matrix(c(1, 2, 3, 4), nrow = 2, byrow = TRUE)
 F
 is.square.matrix(F)
-is.symmetric.matrix(F)   # should be FALSE
+is.symmetric.matrix(F) # should be FALSE
 if (!requireNamespace("matrixcalc", quietly = TRUE)) {
   matrixcalc::is.symmetric.matrix(F)
 } else {
   message("you need to install the package matrixcalc to compare this example")
 }
+
 ## Example 3: Symmetric but negative-definite. The functions are same.
 # eigenvalues are  3 -1
-G <- matrix(c(1, 2, 2, 1), nrow = 2, byrow = TRUE); G
+G <- matrix(c(1, 2, 2, 1), nrow = 2, byrow = TRUE)
+G
 is.symmetric.matrix(G)
 if (!requireNamespace("matrixcalc", quietly = TRUE)) {
   matrixcalc::is.symmetric.matrix(G)
@@ -75,7 +79,7 @@ is.positive.semi.definite(G) # FALSE
 ## Example 3b: A missing value in G
 G[1, 1] <- NA
 is.symmetric.matrix(G) # NA
-is.positive.definite(G)  # NA
+is.positive.definite(G) # NA
 
 ## Example 4: positive definite matrix
 # eigenvalues are 3.4142136 2.0000000 0.585786

@@ -10,13 +10,13 @@ NULL
 #' @details
 #' These functions rely heavily on this following property of matrix normal distribution. Let \code{koch()} refer to the Kronecker product of a matrix. For a n x p matrix \emph{A},
 #' if  \deqn{A \sim MatNorm(M, U, V),} then
-#' \deqn{ vec(A) \sim MVN_{np} (M, Sigma = koch(U,V) ).}
+#' \deqn{ vec(A) \sim MVN_{np} (M, Sigma = koch(V,U) ).}
 #'
 #' Thus, the probability of \code{Lower} < \code{A} < \code{Upper} in the matrix normal can be found by using the CDF of vec(A), which is given by \code{\link[mvtnorm]{pmvnorm}} function in \pkg{mvtnorm}.  See \code{\link[mvtnorm]{algorithms}} and \code{\link[mvtnorm]{pmvnorm}} for more information.
 #'
 #' Also, we can simulate a random matrix \emph{A} from a matrix normal by sampling \emph{vec(A)} from \code{\link[mvtnorm]{rmvnorm}} function in \pkg{mvtnorm}. This matrix \emph{A} takes the rownames from \emph{U} and the colnames from \emph{V}.
 
-#'@section Calculating Matrix Normal Probabilities:
+#' @section Calculating Matrix Normal Probabilities:
 #'
 #'  From the \code{mvtnorm} package, three algorithms are available for evaluating normal probabilities: \itemize{
 #'  \item The default is the randomized Quasi-Monte-Carlo procedure by Genz (1992, 1993) and Genz and Bretz (2002) applicable to arbitrary covariance structures and dimensions up to 1000.
@@ -31,8 +31,7 @@ NULL
 #' }
 
 #' @note
-#' Ideally, both scale matrices are positive-definite. If they do not appear to be symmetric, the tolerance should be increased.
-
+#' Ideally, both scale matrices are positive-definite. If they do not appear to be symmetric, the tolerance should be increased. Since symmetry is checked, the `checkSymmetry` arguments in `mvtnorm::rmvnorm()` are set to FALSE.
 
 # @note Not implemented yet.
 #  To calculate the determinant more quickly for large matrices, the logdet function of a matrix \emph{A} from LaplacesDemon
@@ -44,7 +43,10 @@ NULL
 
 
 #' @references
-#' Iranmanesh, Anis, M. Arashi, and S. M. M. Tabatabaey  On Conditional Applications of Matrix Variate Normal Distribution. \emph{Iranian Journal of Mathematical Sciences and Informatics} 5, no. 2. (November 1, 2010): 33-43. < https://doi.org/10.7508/ijmsi.2010.02.004 >
+#'
+#' Pocuca, N., Gallaugher, M.P., Clark, K.M., & McNicholas, P.D. (2019). Assessing and Visualizing Matrix Variate Normality. Methodology. <https://arxiv.org/abs/1910.02859>
+#'
+#' Gupta, A. K. and D. K. Nagar (1999). Matrix Variate Distributions. Boca Raton: Chapman & Hall/CRC Press.
 
 #' @param A The numeric n x p matrix that follows the matrix-normal. Value used to calculate the density.
 #' @param M  The mean n x p matrix that is numeric and real. Must contain non-missing values. Parameter of matrix Normal.
@@ -59,7 +61,7 @@ NULL
 #' A <- datasets::CO2[1:10, 4:5]
 #' M <- cbind(stats::rnorm(10, 435, 296), stats::rnorm(10, 27, 11))
 #' V <- matrix(c(87, 13, 13, 112), nrow = 2, ncol = 2, byrow = TRUE)
-#' V  # Right covariance matrix (2 x 2), say the covariance between parameters.
+#' V # Right covariance matrix (2 x 2), say the covariance between parameters.
 #' U <- I(10) # Block of left-covariance matrix ( 84 x 84), say the covariance between subjects.
 #'
 #' # PDF
@@ -69,7 +71,8 @@ NULL
 #' # Generating Probability Lower and Upper Bounds (They're matrices )
 #' Lower <- matrix(rep(-1, 20), ncol = 2)
 #' Upper <- matrix(rep(3, 20), ncol = 2)
-#' Lower; Upper
+#' Lower
+#' Upper
 #' # The probablity that a randomly chosen matrix A is between Lower and Upper
 #' pmatnorm(Lower, Upper, M, U, V)
 #'
@@ -88,12 +91,14 @@ NULL
 #' # M has a different sample size than U; will return an error.
 #' \dontrun{
 #' M <- cbind(rnorm(4, 435, 296), rnorm(4, 27, 11))
-#' rmatnorm(M, U, V)}
+#' rmatnorm(M, U, V)
+#' }
 #'
 #' @rdname matrixNormal_Distribution
 #' @importFrom mvtnorm pmvnorm
 #' @export dmatnorm
-dmatnorm <- function(A,
+dmatnorm <- function(
+  A,
                      M,
                      U,
                      V,
@@ -104,12 +109,12 @@ dmatnorm <- function(A,
   p <- ncol(A)
 
   # Checks
-  if (is.data.frame(A))           A <- as.matrix(A)
+  if (is.data.frame(A)) A <- as.matrix(A)
   if (sum(dim(A) == dim(M)) != 2) stop("M must have same dimensions as A.")
   check_matnorm(s = 1, M, U, V, tol)
 
   # The Log Density
-  log.dens <- (-n * p / 2) * log(2 * pi) - p / 2 * log(det(U)) - n / 2 * log(det(V))  +
+  log.dens <- (-n * p / 2) * log(2 * pi) - p / 2 * log(det(U)) - n / 2 * log(det(V)) +
     -1 / 2 * tr(solve(U) %*% (A - M) %*% solve(V) %*% t(A - M))
 
   # Return
@@ -121,31 +126,32 @@ dmatnorm <- function(A,
 }
 
 # #'@importFrom LaplacesDemon logdet() .  This is the Function used:
-logdet <- function(x) { 2 * sum(log(diag(chol(x)))) }
+logdet <- function(x) {
+  2 * sum(log(diag(chol(x))))
+}
 # Uses logdet(U) instead of log(det(U)) which could calculate .
 # The log(det(U)) and log(det(V)) terms have same terms but are positive.
 
 # Uses logdet function. Any difference using LaplaceNormal?
 dmatnorm.logdet <- function(A, M, U, V,
                             tol = .Machine$double.eps^0.5,
-                            log = TRUE
-) {
+                            log = TRUE) {
   n <- nrow(A)
   p <- ncol(A)
 
   # Checks
-  if (is.data.frame(A))            A <- as.matrix(A)
-  if (sum(dim(A) == dim(M)) != 2)  stop("M must have same dimensions as A.")
+  if (is.data.frame(A)) A <- as.matrix(A)
+  if (sum(dim(A) == dim(M)) != 2) stop("M must have same dimensions as A.")
   check_matnorm(s = 1, M, U, V, tol)
 
   # The Log Density
   log.dens <- (-n * p / 2) * log(2 * pi) - p / 2 * logdet(U)
-    - n / 2 * logdet(V)  +
-    - 1 / 2 * tr(solve(U) %*% (A - M) %*% solve(V) %*% t(A - M))
+  -n / 2 * logdet(V) +
+    -1 / 2 * tr(solve(U) %*% (A - M) %*% solve(V) %*% t(A - M))
 
   # Return
   if (log) {
-    return (log.dens)
+    return(log.dens)
   } else {
     return(exp(log.dens))
   }
@@ -158,15 +164,21 @@ dmatnorm.logdet <- function(A, M, U, V,
 #' @param Upper	 The n x p matrix of upper limits for CDF.
 #' @inheritParams mvtnorm::pmvnorm
 #' @export pmatnorm
-pmatnorm <- function(Lower = -Inf,
+pmatnorm <- function(
+  Lower = -Inf,
                      Upper = Inf,
                      M,
                      U,
                      V,
                      tol = .Machine$double.eps^0.5,
-                     algorithm  = mvtnorm::GenzBretz(),
+                     keepAttr = TRUE,
+                     algorithm = mvtnorm::GenzBretz(),
                      ...
-                     ){
+                     ) {
+  if (utils::packageVersion("mvtnorm") < "1.1-2") {
+    warning("New argument added to `mvtnorm v. 1.1-2`. Please upgrade to avoid error when passing `keepAttr`.")
+  }
+
   n <- nrow(M)
   p <- ncol(M)
 
@@ -194,9 +206,15 @@ pmatnorm <- function(Lower = -Inf,
     }
   }
   # Calculating the probablity
-  prob <- mvtnorm::pmvnorm(lower, upper, mean = vec(M),
-    corr = NULL, sigma = kronecker(U, V),
-    algorithm = algorithm, ...)
+  prob <- mvtnorm::pmvnorm(
+    lower, upper,
+    mean = vec(M),
+    corr = NULL,
+    sigma = kronecker(U, V),
+    algorithm = algorithm,
+    ...,
+    keepAttr = keepAttr
+  )
   warning("The covariance matrix is standardized. ")
 
   return(prob)
@@ -205,18 +223,23 @@ pmatnorm <- function(Lower = -Inf,
 #' @rdname matrixNormal_Distribution
 #' @param s The number of observations desired to simulate from the matrix normal. Defaults to 1. Currently has no effect but acts as a placeholder in future releases.
 # #'@inheritParams mvtnorm::rmvnorm
-#' @param method String specifying the matrix decomposition used to determine the matrix root of the Kronecker product of U and V in \code{rmatnorm}. Possible methods are eigenvalue decomposition ("eigen", default), singular value decomposition ("svd"), and Cholesky decomposition ("chol"). The Cholesky (the default) is typically fastest, but not by much though. Passed to \code{\link[mvtnorm]{rmvnorm}}.
+#' @param method String specifying the matrix decomposition used to determine the matrix root of the Kronecker product of U and V in \code{rmatnorm}. Possible methods are eigenvalue decomposition ("eigen"), singular value decomposition ("svd"), and Cholesky decomposition ("chol"). The Cholesky (the default) is typically fastest, but not by much though. Passed to \code{\link[mvtnorm]{rmvnorm}}.
 
 #' @import mvtnorm
 #' @export rmatnorm
 
-rmatnorm <- function(s = 1,
+rmatnorm <- function(
+  s = 1,
                      M,
                      U,
                      V,
                      tol = .Machine$double.eps^0.5,
                      method = "chol"
-                     ) {
+  ) {
+  if (utils::packageVersion("mvtnorm") < "1.1-2") {
+    warning("New argument added to `mvtnorm v. 1.1-2`. Please upgrade to avoid error.")
+  }
+
   # Convert all to matrices -- added 5/2/20
   M <- as.matrix(M)
   U <- as.matrix(U)
@@ -225,17 +248,24 @@ rmatnorm <- function(s = 1,
   n <- nrow(M)
   p <- ncol(M)
 
-  #Checks
+  # Checks
+  # (Symmetry is already checked)
   check_matnorm(s, M, U, V, tol)
 
-  #Vectorizing and sampling from rmvnorm
-  Sigma <- kronecker(U,V)
-  vec.X <- mvtnorm::rmvnorm(1, vec(M), Sigma, method = method)
-  #pre0.9_9994 = FALSE #uses later version of package.
+  # Vectorizing and sampling from rmvnorm
+  if (utils::packageVersion("matrixNormal") <= "0.0.5") {
+    warning("The construction of sigma has been found to be incorrect. Please upgrade to new version.")
+  }
+  # Sigma <- kronecker(U,V) #incorrect -- thanks @prockenschaub, https://github.com/phargarten2/matrixNormal/issues/1
+  Sigma <- kronecker(V, U)
 
-  #Reputting back into a matrix
-  X <- matrix(vec.X, nrow = n, ncol = p,
-              dimnames = list(rownames(U), colnames(V))
+  vec.X <- mvtnorm::rmvnorm(1, vec(M), Sigma, method = method, checkSymmetry = FALSE)
+  # pre0.9_9994 = FALSE #uses later version of package.
+
+  # Reputting back into a matrix
+  X <- matrix(vec.X,
+    nrow = n, ncol = p,
+    dimnames = list(rownames(U), colnames(V))
   )
 
   return(X)

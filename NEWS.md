@@ -1,15 +1,40 @@
 
+# matrixNormal 0.1.0 2021-Dec-29
+
+  - `pmatnorm`: Included argument `keepAttr` to pass to
+    `mvtnorm::pmvnorm()` v.1.1-2: logical allowing users to attach error
+    and message to the return value.
+
+  - `rmatnorm`:
+    
+      - Added argument `checkSymmetry = FALSE` to `mvtnorm::rmvnorm()`
+        as the matrices are already checked for symmetry.  
+      - U and V are incorrectly switched, (thanks, @prockenschaub,
+        <https://github.com/phargarten2/matrixNormal/issues/1>)
+          - Added warning to earlier versions of R
+          - Changed reference cited.  
+          - Made argument method clearer
+
+  - Documentation clarification, thanks @1
+
+  - Vignette clarification, thanks @\#1.
+
 # matrixNormal 0.0.5 2021-Apr-1
 
-  - Minor Change: Changed lazy data to FALSE to remove notes on CRAN
-    check.
+## Bug Fixes
 
-# matrixNormal 0.0.4 2020-08-26 on CRAN
+  - Minor Change: Changed lazy data to FALSE in description file to
+    remove notes on CRAN check in R 4.0.5.
+
+# matrixNormal 0.0.4 2020-08-26
 
   - New `vech()` function: performs half-vectorization on a symmetric
     matrix. This is the vector-form of the lower triangular matrix only.
     Unlike other functions on CRAN, vech() inherits any names from the
     matrix.
+
+## Bug Fixes
+
   - `dmatrixnorm`: Clarified by replacing the name of argument `use.log`
     with `log` for consistency in argument name with mvtnorm and stats
     package.
@@ -24,8 +49,8 @@
     effect but acts as a placeholder in future releases.
   - Clarified documentation.
   - Added session information and version details to the vignette. The
-    updated versions of the packages listed do not affect the
-    conclusions.
+    updated versions of the packages listed do not affect the results of
+    matrixNormal functions.
 
 # matrixNormal 0.0.2 2019-12-5
 

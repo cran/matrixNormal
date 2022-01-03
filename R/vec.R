@@ -10,7 +10,7 @@
 #' \item Unlike other `vec()` functions on CRAN, matrixNormal versions inherit names from matrices to their vectorized forms.
 #' \item vec() was adapted from Frederick Novomestky's \pkg{matrixcalc}. This function is edited so that it can take dimension names and return the matrix as a vector.
 #' \item These functions were used as accessories used in matrixNormal functions.
-#'}
+#' }
 #'
 #' @references
 #' Magnus, J. R. and H. Neudecker (1999). \emph{Matrix Differential Calculus with Applications in Statistics and Econometrics.} Second Edition, John Wiley, ed.
@@ -30,10 +30,12 @@
 #' @export
 
 vec <- function(A, use.Names = TRUE) {
-  if (is.vector(A)) return(A)
+  if (is.vector(A)) {
+    return(A)
+  }
   if (!is.matrix(A)) stop("argument A is not a matrix")
   if (!is.numeric(A)) stop("argument A is not a numeric matrix")
-  vec.A <-  as.vector(A)
+  vec.A <- as.vector(A)
 
   ## PAUL HARGARTEN ADDED THIS CODE:
   if (use.Names) {
@@ -41,8 +43,12 @@ vec <- function(A, use.Names = TRUE) {
     c <- ncol(A)
 
     # if no dimnames, add # instead.
-    if (is.null(dimnames(A)[[1]])) { dimnames(A)[[1]] <- 1:n }
-    if (is.null(dimnames(A)[[2]])) { dimnames(A)[[2]] <- 1:c }
+    if (is.null(dimnames(A)[[1]])) {
+      dimnames(A)[[1]] <- 1:n
+    }
+    if (is.null(dimnames(A)[[2]])) {
+      dimnames(A)[[2]] <- 1:c
+    }
     names(vec.A) <- paste(rep(dimnames(A)[[1]], c),
       rep(dimnames(A)[[2]], each = n),
       sep = ":"

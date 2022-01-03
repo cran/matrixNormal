@@ -57,7 +57,8 @@ library(matrixNormal)
 ```
 
 ## Distribution functions
-  The matrix normal distribution is a generalization of the multivariate normal distribution to matrix-valued random values. The parameters consist of a *n x p* mean matrix **M** and two positive-definite covariance matrices, one for rows **U** and another for columns **V**. Suppose that any *n x p* matrix $A \sim MatNorm_{n,p}(M, U, V)$. The mean of **A** is **M**, and the variance of `vec(A)` is the Kronecker product of **U** and **V**.
+
+  The matrix normal distribution is a generalization of the multivariate normal distribution to matrix-valued random values. The parameters consist of a *n x p* mean matrix **M** and two positive-definite covariance matrices, one for rows **U** and another for columns **V**. Suppose that any *n x p* matrix $A \sim MatNorm_{n,p}(M, U, V)$. The mean of **A** is **M**, and the variance of `vec(A)` is the Kronecker product of **V** and **U**.
 
   The matrix normal distribution is a conjugate prior of the coefficients used in multivariate regression. Suppose  there are *p* predictors for *k* dependent variables. In univariate regression, only one dependent variable exists, so the conjugate prior for the *k* regression coefficients is the multivariate normal distribution. For multivariate regression, the extension of the conjugate prior of the coefficient matrix is the matrix normal distribution. This package also contains the PDF, CDF, and random number generation for the matrix normal distribution (*matnorm). See matrixNormal_Distribution file for more information.
 
@@ -109,10 +110,11 @@ A
 # Predicted Counts for y can be given as:
 ceiling(rowSums(X %*% A))
 ```
+
 However, the predicted counts do not have much meaning because the prior is uninformed from the data. We should use the posterior distribution to predict **Y**. Iranmanesh 2010  [@iranmaneshConditionalApplicationsMatrix2010] shows the posterior distributions to be
 $$ \Psi | \Sigma, Y, X \sim MatNorm_{kxp}( \frac{\hat{\Psi} +\Psi_0}{2}, (2X^TX)^{-1}, \Sigma)$$
   and
-$$ \Sigma | Y, X \sim W^{-1}_p(S*, 2\nu+n)$$
+$$ \Sigma | Y, X \sim W^{-1}_p(S^*, 2\nu+n)$$
   where:  
 * $\hat{\Psi}$ is the maximum likelihood estimate (MLE) for the coefficient $\Psi$ matrix.
 * *S* is the MLE for the covariance matrix $\Sigma$: $(Y-X\cdot\hat{\Psi})^T*(Y-X\cdot\hat{\Psi})$
@@ -121,7 +123,7 @@ $$ \Sigma | Y, X \sim W^{-1}_p(S*, 2\nu+n)$$
 * *c* is the dimension of $\Sigma$
 * *n* is the sample size, the number of rows in **Y** and **X**. 
 
-Additional details can be found in Iranmanesh et al. 2010 [@iranmaneshConditionalApplicationsMatrix2010]. At any rate, the `matrixNormal` package can be used in Bayesian Multivariate Linear Regression. 
+Additional details can be found in Iranmanesh et al. 2010 [@iranmaneshConditionalApplicationsMatrix2010] and Pocuca et al. 2019 [@Pocuca2019AssessingAV]. At any rate, the `matrixNormal` package can be used in Bayesian Multivariate Linear Regression. 
 
 ## Matrix functions
 In the `matrixNormal` package, useful but simple matrix operations have been coded:

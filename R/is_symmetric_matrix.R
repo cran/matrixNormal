@@ -35,22 +35,25 @@
 #' ## Example 1: Not a matrix. should get an error.
 #' df <- as.data.frame(matrix(c(1, 2, 3, 4, 5, 6), nrow = 2, byrow = TRUE))
 #' df
-#' \dontrun{is.square.matrix(df)}
+#' \dontrun{
+#' is.square.matrix(df)
+#' }
 #'
 #' ## Example 2: Not symmetric & compare against matrixcalc
 #' F <- matrix(c(1, 2, 3, 4), nrow = 2, byrow = TRUE)
 #' F
 #' is.square.matrix(F)
-#' is.symmetric.matrix(F)   # should be FALSE
+#' is.symmetric.matrix(F) # should be FALSE
 #' if (!requireNamespace("matrixcalc", quietly = TRUE)) {
 #'   matrixcalc::is.symmetric.matrix(F)
 #' } else {
 #'   message("you need to install the package matrixcalc to compare this example")
 #' }
-
+#'
 #' ## Example 3: Symmetric but negative-definite. The functions are same.
 #' # eigenvalues are  3 -1
-#' G <- matrix(c(1, 2, 2, 1), nrow = 2, byrow = TRUE); G
+#' G <- matrix(c(1, 2, 2, 1), nrow = 2, byrow = TRUE)
+#' G
 #' is.symmetric.matrix(G)
 #' if (!requireNamespace("matrixcalc", quietly = TRUE)) {
 #'   matrixcalc::is.symmetric.matrix(G)
@@ -64,7 +67,7 @@
 #' ## Example 3b: A missing value in G
 #' G[1, 1] <- NA
 #' is.symmetric.matrix(G) # NA
-#' is.positive.definite(G)  # NA
+#' is.positive.definite(G) # NA
 #'
 #' ## Example 4: positive definite matrix
 #' # eigenvalues are 3.4142136 2.0000000 0.585786
@@ -99,15 +102,17 @@ is.square.matrix <- function(A) {
 #' @export is.symmetric.matrix
 #  @description Is matrix is symmetric? A must be a numeric square matrix with no missing values.
 is.symmetric.matrix <- function(A, tol = .Machine$double.eps^0.5) {
-  if (anyNA(A)) return(NA)
+  if (anyNA(A)) {
+    return(NA)
+  }
   if (!is.square.matrix(A)) {
     warning(sprintf("% is not a square matrix", A))
     return(FALSE)
   }
 
   # Is A and t(A) equal within a tolerance?    # Edited from matrixcalc (PH)
-  total.abs <-  sum(abs(A - t(A)))
-  if (total.abs < tol) {    # to avoid being exactly equal
+  total.abs <- sum(abs(A - t(A)))
+  if (total.abs < tol) { # to avoid being exactly equal
     okay <- TRUE
   } else {
     print("A is not symmetric. Top of the matrix: ")
@@ -129,7 +134,7 @@ find.eval <- function(A, tol = .Machine$double.eps^0.5) {
   } else if (!is.symm) { # Pass a Negative Number so it is returned false
     # stop(sprintf("%s is not symmetric so no eigenvalues are imputed", A))
     eigenvalues <- -100
-  }  else if (is.symm) {
+  } else if (is.symm) {
     # If A is symmetric, find eigenvalues.
     eigenvalues <- eigen(A, symmetric = TRUE, only.values = TRUE)$values
     # Adjust small eigenvalues to be 0  #(Edited from for loop)
@@ -176,10 +181,12 @@ checkSymmetricPositiveDefinite <- function(x, name = "sigma") {
     stop(sprintf("%s must be a square matrix", name))
   }
   if (any(diag(x) <= 0)) {
-    stop(sprintf("%s all diagonal elements must be positive",
-      name))
+    stop(sprintf(
+      "%s all diagonal elements must be positive",
+      name
+    ))
   }
-  min.eval <- min(eigen(x)$values)    # edited from tmvnorm function
+  min.eval <- min(eigen(x)$values) # edited from tmvnorm function
   if (det(x) <= 0 & min.eval(x) < 0) {
     stop(sprintf("%s must be positive definite", name))
   }

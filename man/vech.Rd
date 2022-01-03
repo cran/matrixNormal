@@ -26,7 +26,8 @@ For a symmetric matrix \emph{A}, the vectorization of \emph{A} contains more inf
 Unlike other \code{vech()} functions available on CRAN, matrixNormal versions inherit names from matrices to their vectorized forms.
 }
 \examples{
-x <- matrix(c(1, 2, 2, 4), nrow = 2, byrow = TRUE,
+x <- matrix(c(1, 2, 2, 4),
+  nrow = 2, byrow = TRUE,
   dimnames = list(1:2, c("Sex", "Smoker"))
 )
 print(x)

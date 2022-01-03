@@ -1,5 +1,5 @@
 Package: matrixNormal
-Version: 0.0.5
+Version: 0.1.0
 Type: Package
 Title: The Matrix Normal Distribution
 Authors@R: person("Paul M.", "Hargarten", email = "hargartenp@vcu.edu", role = c("aut", "cre"))	
@@ -17,8 +17,8 @@ RoxygenNote: 7.1.1
 Language: en-US
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2021-04-02 04:54:04 UTC; pablo
+Packaged: 2022-01-03 13:14:05 UTC; pablo
 Author: Paul M. Hargarten [aut, cre]
 Maintainer: Paul M. Hargarten <hargartenp@vcu.edu>
 Repository: CRAN
-Date/Publication: 2021-04-02 07:50:02 UTC
+Date/Publication: 2022-01-03 14:10:02 UTC

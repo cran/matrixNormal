@@ -16,6 +16,7 @@ pmatnorm(
   U,
   V,
   tol = .Machine$double.eps^0.5,
+  keepAttr = TRUE,
   algorithm = mvtnorm::GenzBretz(),
   ...
 )
@@ -39,17 +40,21 @@ rmatnorm(s = 1, M, U, V, tol = .Machine$double.eps^0.5, method = "chol")
 
 \item{Upper}{The n x p matrix of upper limits for CDF.}
 
+\item{keepAttr}{\code{\link{logical}} indicating if
+    \code{\link{attributes}} such as \code{error} and \code{msg} should be
+    attached to the return value.  The default, \code{TRUE} is back compatible.}
+
 \item{algorithm}{ an object of class \code{\link[mvtnorm]{GenzBretz}},
                     \code{\link[mvtnorm]{Miwa}} or \code{\link[mvtnorm]{TVPACK}}
-                    specifying both the algorithm to be used as well as 
+                    specifying both the algorithm to be used as well as
                     the associated hyper parameters.}
 
-\item{...}{ additional parameters (currently given to \code{GenzBretz} for 
+\item{...}{ additional parameters (currently given to \code{GenzBretz} for
               backward compatibility issues). }
 
 \item{s}{The number of observations desired to simulate from the matrix normal. Defaults to 1. Currently has no effect but acts as a placeholder in future releases.}
 
-\item{method}{String specifying the matrix decomposition used to determine the matrix root of the Kronecker product of U and V in \code{rmatnorm}. Possible methods are eigenvalue decomposition ("eigen", default), singular value decomposition ("svd"), and Cholesky decomposition ("chol"). The Cholesky (the default) is typically fastest, but not by much though. Passed to \code{\link[mvtnorm]{rmvnorm}}.}
+\item{method}{String specifying the matrix decomposition used to determine the matrix root of the Kronecker product of U and V in \code{rmatnorm}. Possible methods are eigenvalue decomposition ("eigen"), singular value decomposition ("svd"), and Cholesky decomposition ("chol"). The Cholesky (the default) is typically fastest, but not by much though. Passed to \code{\link[mvtnorm]{rmvnorm}}.}
 }
 \description{
 Computes the density (\code{dmatnorm}), calculates the cumulative distribution function (CDF, \code{pmatnorm}), and generates 1 random number (\code{rmatnorm}) from the matrix normal: \deqn{A \sim MatNorm_{n,p}(M, U, V) }.
@@ -57,14 +62,14 @@ Computes the density (\code{dmatnorm}), calculates the cumulative distribution f
 \details{
 These functions rely heavily on this following property of matrix normal distribution. Let \code{koch()} refer to the Kronecker product of a matrix. For a n x p matrix \emph{A},
 if  \deqn{A \sim MatNorm(M, U, V),} then
-\deqn{ vec(A) \sim MVN_{np} (M, Sigma = koch(U,V) ).}
+\deqn{ vec(A) \sim MVN_{np} (M, Sigma = koch(V,U) ).}
 
 Thus, the probability of \code{Lower} < \code{A} < \code{Upper} in the matrix normal can be found by using the CDF of vec(A), which is given by \code{\link[mvtnorm]{pmvnorm}} function in \pkg{mvtnorm}.  See \code{\link[mvtnorm]{algorithms}} and \code{\link[mvtnorm]{pmvnorm}} for more information.
 
 Also, we can simulate a random matrix \emph{A} from a matrix normal by sampling \emph{vec(A)} from \code{\link[mvtnorm]{rmvnorm}} function in \pkg{mvtnorm}. This matrix \emph{A} takes the rownames from \emph{U} and the colnames from \emph{V}.
 }
 \note{
-Ideally, both scale matrices are positive-definite. If they do not appear to be symmetric, the tolerance should be increased.
+Ideally, both scale matrices are positive-definite. If they do not appear to be symmetric, the tolerance should be increased. Since symmetry is checked, the `checkSymmetry` arguments in `mvtnorm::rmvnorm()` are set to FALSE.
 }
 \section{Calculating Matrix Normal Probabilities}{
 
@@ -88,7 +93,7 @@ Ideally, both scale matrices are positive-definite. If they do not appear to be 
 A <- datasets::CO2[1:10, 4:5]
 M <- cbind(stats::rnorm(10, 435, 296), stats::rnorm(10, 27, 11))
 V <- matrix(c(87, 13, 13, 112), nrow = 2, ncol = 2, byrow = TRUE)
-V  # Right covariance matrix (2 x 2), say the covariance between parameters.
+V # Right covariance matrix (2 x 2), say the covariance between parameters.
 U <- I(10) # Block of left-covariance matrix ( 84 x 84), say the covariance between subjects.
 
 # PDF
@@ -98,7 +103,8 @@ dmatnorm(A, M, U, V, log = FALSE)
 # Generating Probability Lower and Upper Bounds (They're matrices )
 Lower <- matrix(rep(-1, 20), ncol = 2)
 Upper <- matrix(rep(3, 20), ncol = 2)
-Lower; Upper
+Lower
+Upper
 # The probablity that a randomly chosen matrix A is between Lower and Upper
 pmatnorm(Lower, Upper, M, U, V)
 
@@ -117,11 +123,14 @@ rmatnorm(1, M, U, V)
 # M has a different sample size than U; will return an error.
 \dontrun{
 M <- cbind(rnorm(4, 435, 296), rnorm(4, 27, 11))
-rmatnorm(M, U, V)}
+rmatnorm(M, U, V)
+}
 
 }
 \references{
-Iranmanesh, Anis, M. Arashi, and S. M. M. Tabatabaey  On Conditional Applications of Matrix Variate Normal Distribution. \emph{Iranian Journal of Mathematical Sciences and Informatics} 5, no. 2. (November 1, 2010): 33-43. < https://doi.org/10.7508/ijmsi.2010.02.004 >
+Pocuca, N., Gallaugher, M.P., Clark, K.M., & McNicholas, P.D. (2019). Assessing and Visualizing Matrix Variate Normality. Methodology. <https://arxiv.org/abs/1910.02859>
+
+Gupta, A. K. and D. K. Nagar (1999). Matrix Variate Distributions. Boca Raton: Chapman & Hall/CRC Press.
 }
 \concept{distribution}
 \keyword{distribution}
