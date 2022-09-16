@@ -19,19 +19,23 @@ Returns a column vector that stacks the columns of \emph{A}, a m x n matrix.
 }
 \note{
 \enumerate{
-\item Unlike other `vec()` functions on CRAN, matrixNormal versions inherit names from matrices to their vectorized forms.
+\item Unlike other `vec()` functions on CRAN, matrixNormal version inherits names from matrices to their vectorized forms.
 \item vec() was adapted from Frederick Novomestky's \pkg{matrixcalc}. This function is edited so that it can take dimension names and return the matrix as a vector.
-\item These functions were used as accessories used in matrixNormal functions.
+\item These functions were used as accessories for other matrixNormal functions.
 }
 }
 \examples{
 M <- matrix(c(4, 5, 6, 7, 8, 9), nrow = 3)
 M
+vec(M)
+if (!requireNamespace("matrixcalc", quietly = TRUE)) {
 # Compare vec from \pkg{matrixcalc} and new function.
 matrixcalc::vec(M)
-vec(M)
 # The names are rownames(M):colnames(M) in that order.
 # Very similar to matrixcalc but dimension names are different.
+} else {
+  message("you need to install the package matrixcalc to compare this example.")
+}
 }
 \references{
 Magnus, J. R. and H. Neudecker (1999). \emph{Matrix Differential Calculus with Applications in Statistics and Econometrics.} Second Edition, John Wiley, ed.

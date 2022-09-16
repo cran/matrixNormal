@@ -21,7 +21,7 @@ is.positive.definite(A, tol = .Machine$double.eps^0.5)
 \item{tol}{A numeric tolerance level used to check if a matrix is symmetric. That is, a matrix is symmetric if the difference between the matrix and its transpose is between -\code{tol} and \code{tol}.}
 }
 \description{
-Determines if a matrix is square, symmetric, positive-definite, or positive-semi-definite.
+Determines if a matrix is square, symmetric, positive-definite, or positive semi-definite.
 }
 \details{
 A tolerance is added to indicate if a matrix \emph{A} is approximately symmetric. If \emph{A} is not symmetric, a message and first few rows of the matrix is printed. If \emph{A} has any missing values, NA is returned.

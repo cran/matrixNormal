@@ -223,19 +223,19 @@ pmatnorm <- function(
 #' @rdname matrixNormal_Distribution
 #' @param s The number of observations desired to simulate from the matrix normal. Defaults to 1. Currently has no effect but acts as a placeholder in future releases.
 # #'@inheritParams mvtnorm::rmvnorm
-#' @param method String specifying the matrix decomposition used to determine the matrix root of the Kronecker product of U and V in \code{rmatnorm}. Possible methods are eigenvalue decomposition ("eigen"), singular value decomposition ("svd"), and Cholesky decomposition ("chol"). The Cholesky (the default) is typically fastest, but not by much though. Passed to \code{\link[mvtnorm]{rmvnorm}}.
+#' @param method String specifying the matrix decomposition used to determine the matrix root of the Kronecker product of U and V in \code{rmatnorm}. Possible methods are eigenvalue decomposition ("eigen"), singular value decomposition ("svd"), and Cholesky decomposition ("chol"). The Cholesky (the default) is typically fastest, but not by much though. Passed to **mvtnorm**::\code{\link[mvtnorm]{rmvnorm}}.
 
 #' @import mvtnorm
 #' @export rmatnorm
 
 rmatnorm <- function(
-  s = 1,
-                     M,
-                     U,
-                     V,
-                     tol = .Machine$double.eps^0.5,
-                     method = "chol"
-  ) {
+    s = 1,
+    M,
+    U,
+    V,
+    tol = .Machine$double.eps^0.5,
+    method = "chol"
+) {
   if (utils::packageVersion("mvtnorm") < "1.1-2") {
     warning("New argument added to `mvtnorm v. 1.1-2`. Please upgrade to avoid error.")
   }
@@ -264,8 +264,8 @@ rmatnorm <- function(
 
   # Reputting back into a matrix
   X <- matrix(vec.X,
-    nrow = n, ncol = p,
-    dimnames = list(rownames(U), colnames(V))
+              nrow = n, ncol = p,
+              dimnames = list(rownames(U), colnames(V))
   )
 
   return(X)

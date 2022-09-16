@@ -54,7 +54,7 @@ rmatnorm(s = 1, M, U, V, tol = .Machine$double.eps^0.5, method = "chol")
 
 \item{s}{The number of observations desired to simulate from the matrix normal. Defaults to 1. Currently has no effect but acts as a placeholder in future releases.}
 
-\item{method}{String specifying the matrix decomposition used to determine the matrix root of the Kronecker product of U and V in \code{rmatnorm}. Possible methods are eigenvalue decomposition ("eigen"), singular value decomposition ("svd"), and Cholesky decomposition ("chol"). The Cholesky (the default) is typically fastest, but not by much though. Passed to \code{\link[mvtnorm]{rmvnorm}}.}
+\item{method}{String specifying the matrix decomposition used to determine the matrix root of the Kronecker product of U and V in \code{rmatnorm}. Possible methods are eigenvalue decomposition ("eigen"), singular value decomposition ("svd"), and Cholesky decomposition ("chol"). The Cholesky (the default) is typically fastest, but not by much though. Passed to **mvtnorm**::\code{\link[mvtnorm]{rmvnorm}}.}
 }
 \description{
 Computes the density (\code{dmatnorm}), calculates the cumulative distribution function (CDF, \code{pmatnorm}), and generates 1 random number (\code{rmatnorm}) from the matrix normal: \deqn{A \sim MatNorm_{n,p}(M, U, V) }.

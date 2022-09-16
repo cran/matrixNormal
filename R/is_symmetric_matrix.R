@@ -4,7 +4,7 @@
 #' @family statistics
 #' @keywords matrix
 #'
-#' @description Determines if a matrix is square, symmetric, positive-definite, or positive-semi-definite.
+#' @description Determines if a matrix is square, symmetric, positive-definite, or positive semi-definite.
 #' @details
 #' A tolerance is added to indicate if a matrix \emph{A} is approximately symmetric. If \emph{A} is not symmetric, a message and first few rows of the matrix is printed. If \emph{A} has any missing values, NA is returned.
 #' \itemize{
@@ -171,7 +171,7 @@ is.positive.definite <- function(A, tol = .Machine$double.eps^0.5) {
 }
 
 
-# Edited check from tmvtnorm so that the symmetric test includes eigenvalues instead of the deteriminant.
+# Edited check from tmvtnorm so that the symmetric test includes eigenvalues instead of the determinant.
 # But not used in this function.
 checkSymmetricPositiveDefinite <- function(x, name = "sigma") {
   if (!isSymmetric(x, tol = sqrt(.Machine$double.eps))) {

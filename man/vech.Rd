@@ -23,7 +23,7 @@ Stacks elements of the lower triangle of a numeric symmetric matrix \emph{A}.
 For a symmetric matrix \emph{A}, the vectorization of \emph{A} contains more information than necessary. The half-vectorization, denoted \code{vech()}, of a symmetric square n by n matrix \emph{A} is the vectorization of the lower triangular portion.
 }
 \note{
-Unlike other \code{vech()} functions available on CRAN, matrixNormal versions inherit names from matrices to their vectorized forms.
+Unlike other \code{vech()} functions available on CRAN, matrixNormal version may inherit names from matrices to their vectorized forms.
 }
 \examples{
 x <- matrix(c(1, 2, 2, 4),
